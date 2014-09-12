@@ -3,7 +3,7 @@ for n = 1:5;
     
     disp('Recording part');
     disp(n)
-    recordblocking(tempAudioObj, 0.3);
+    recordblocking(tempAudioObj, 1);
     disp('Done with part');
     disp(n)
     
@@ -12,6 +12,9 @@ for n = 1:5;
     F1 = fft(tempAudioData);
     N = numel(F1);
 %     half = int32(N/2);
+    mean_value = mean(abs(F1));
+    threshold  = 1.1*mean_value;
+    F1[abs(F1) < threshold] = 0;
     F1a = F1(1:N/2);   % the lower half of the fft
     % F1b = F1(end:-1:half+1);
     F1b = F1((N/2)+1:1:end);  % the upper half of the fft - flipped "the right way around"
@@ -38,7 +41,7 @@ for n = 1:5;
 
     soundsc(tempAudioData, 44000);
     soundsc(ters, 44000);
-    soundsc(kvint, 44000);
+    %soundsc(kvint, 44000);
     
     
 end
