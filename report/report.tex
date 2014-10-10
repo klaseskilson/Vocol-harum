@@ -82,7 +82,7 @@ Projektets mål är att skapa en så kallad vocal harmonizer. Detta innebär ett
 
 Hädan efter krävs en förståelse för vad en skala innebär, och vad diatoniska intervall är.
 
-Ters och kvint är förhöjningar av frekvensnivån utav grundtonen enligt Tabell 1. För att nå kvint/ters behöver alltså originalljudets frekvens höjas. Då dessa värden är helt oberoende av ton är det irrelevant att ta reda på grundtonens egna frekvens för att göra frekvenshöjningen [2]. Enbart en av liten och stor ters är aktuell i en skala, och hädanefter kommer den stora tersen att användas. \\
+Ters och kvint är förhöjningar av frekvensnivån utav grundtonen enligt \emph{tabell \ref{table:diatonic}}. För att nå kvint/ters behöver alltså originalljudets frekvens höjas. Då dessa värden är helt oberoende av ton är det irrelevant att ta reda på grundtonens egna frekvens för att göra frekvenshöjningen \cite{bib:schmidt}. Enbart en av liten och stor ters är aktuell i en skala, och hädanefter kommer den stora tersen att användas. \\
 
 \begin{table}[h]
   \begin{center}
@@ -104,9 +104,9 @@ Samtliga medlemmar i gruppen började arbetet med att läsa på om signalbehandl
 
 Det verktyg som använts främst i projektet är MATLAB. För inspelning och uppspelning användes datorns inbyggda hårdvarukomponenter.
 
-Ett program skapades som läser in en signal och gör om den till frekvensdomän med hjälp av inbyggda transformfunktioner i MATLAB. Det görs då ljudets fasgång inte går att förändra i tidsdomänen. Programmet delar upp ljudet i mindre segment där brus reduceras, och fasgången studeras. Skillnaden i fasgång mellan nuvarande segment och förgående beräknas. Genom denna skillnad kan en syntetisk fasgång skapas. Den syntetiska fasgången måste användas för att undvika att ett fasfel uppstår vid omsamplingen[4]. Signalen transformeras sedan tillbaka till tidsdomänen med hjälp av invers fouriertransform, se programkod 1. Segmentet samplas om i tidsdomänen genom att samplingsvärden med visst intervall raderas. Intervallet är relativt till vald tonhöjning. En linjär interpolation sker av kvarstående samplingsvärden för att ljudet skall vara kontinuerligt. De nya tonerna, kvinten och tersen, kan sedan adderas med grundtonen i tidsdomänen.
+Ett program skapades som läser in en signal och gör om den till frekvensdomän med hjälp av inbyggda transformfunktioner i MATLAB. Det görs då ljudets fasgång inte går att förändra i tidsdomänen. Programmet delar upp ljudet i mindre segment där brus reduceras, och fasgången studeras. Skillnaden i fasgång mellan nuvarande segment och förgående beräknas \cite[kapitel 7.4]{bib:dafx}. Genom denna skillnad kan en syntetisk fasgång skapas. Den syntetiska fasgången måste användas för att undvika att ett fasfel uppstår vid omsamplingen \cite{bib:moinet}. Signalen transformeras sedan tillbaka till tidsdomänen med hjälp av invers fouriertransform, se \emph{programkod \ref{lst:fft}}. Segmentet samplas om i tidsdomänen genom att samplingsvärden med visst intervall raderas. Intervallet är relativt till vald tonhöjning. En linjär interpolation sker av kvarstående samplingsvärden för att ljudet skall vara kontinuerligt. De nya tonerna, kvinten och tersen, kan sedan adderas med grundtonen i tidsdomänen.
 
-\begin{lstlisting}[caption={fouriertransform (fft) samt invers fouriertransform (ifft)},label={lst:myListing}]
+\begin{lstlisting}[caption={fouriertransform (fft) samt invers fouriertransform (ifft)},label={lst:fft}]
   f         = fft(fftshift(grain));
   r         = abs(f);
   meanValue = mean(r);
@@ -119,7 +119,7 @@ För att reducera brus görs åtgärder på två sätt. Medelvärdet av frekvens
 
 Den andra åtgärden kontrollerar därför medelvärdet av ljudintensiteten i varje segment. Är detta värde lägre än 30dB modifieras inget ljud alls och programmet går vidare till nästa segment.
 
-För att höja frekvensen på ett ljud flyttas de sampelpunkter som verkar på originalsignalen isär med en önskad faktor. De trycks sedan ihop till ursprungligt avstånd och signalen “följer med”, se Figur 1. På så sätt fås ett tidsfel som beror på faktorn för samplingen, det vill säga den grad som frekvensen ska höjas. Under uppspelning av ljud blir därför kvintens ljud något kortare än originalet och tersen ännu kortare. En lösning på problemet är repetition och överlappning[3]. Signalen delas upp i hanningfönster. För att förlänga signalen repeteras skärningsdelen av angränsande segment, se Figur 2. Det ger visserligen ett fel, men om segmenten är tillräckligt små och repetitionsdelen liten kommer detta inte att höras.
+För att höja frekvensen på ett ljud flyttas de sampelpunkter som verkar på originalsignalen isär med en önskad faktor. De trycks sedan ihop till ursprungligt avstånd och signalen “följer med”, se \emph{figur \ref{fig:resample}}. På så sätt fås ett tidsfel som beror på faktorn för samplingen, det vill säga den grad som frekvensen ska höjas. Under uppspelning av ljud blir därför kvintens ljud något kortare än originalet och tersen ännu kortare. En lösning på problemet är repetition och överlappning \cite{bib:tfya}. Signalen delas upp i hanningfönster. För att förlänga signalen repeteras skärningsdelen av angränsande segment, se \emph{figur \ref{fig:overlap}}. Det ger visserligen ett fel, men om segmenten är tillräckligt små och repetitionsdelen liten kommer detta inte att höras.
 
 \begin{Figure}
   \centering
@@ -141,11 +141,11 @@ Det slutgiltiga resultatet är en MATLAB-funktion som behandlar ett förinspelat
 
 \section{Diskussion}
 
-I och med att MATLAB ej är gjort för snabb och effektiv beräkning i realtid inleddes arbetet med att göra ett program i Python. Fördelen mot MATLAB är att Python effektivt utnyttjar moderna datorers förmågor att använda flera trådar parallellt. Med andra ord körs flera processer i programmet samtidigt utan kravet att tidigare operationer genomförts fullständigt. Detta i kombination med mjukvarupaket för matematiska operationer, exempelvis Numpy eller Scipy [5], gjorde Python till ett lämpligt verktyg för projektets mål.
+I och med att MATLAB ej är gjort för snabb och effektiv beräkning i realtid inleddes arbetet med att göra ett program i Python. Fördelen mot MATLAB är att Python effektivt utnyttjar moderna datorers förmågor att använda flera trådar parallellt. Med andra ord körs flera processer i programmet samtidigt utan kravet att tidigare operationer genomförts fullständigt. Detta i kombination med mjukvarupaket för matematiska operationer, exempelvis Numpy eller Scipy \cite{bib:scipy}, gjorde Python till ett lämpligt verktyg för projektets mål.
 
 Det visade sig dock att Python och MATLAB fungerar annorlunda ur ett numeriskt perspektiv – exempelvis gav ett ljud maximala värdet 0,25 i MATLAB och $1,7 \cdot 10^{-38}$ i Python. Resultatet av Python-programmets matematiska operationer var således inte alls som förväntat. Ljudet blev ohörtbart på grund av ljudfenomen som distortion och brus. Gruppen valde att ej gräva djupare i bakomliggande orsaker på grund av tidsbrist, utan istället fokusera på att få fram ett bra resultat med förinspelat ljud. Arbetet fortsatte därför i MATLAB.
 
-MATLAB fungerar väl för redan inspelade ljud, men fungerar sämre för in- och uppspelning i realtid. Funktionen recordblocking [6] används för att spela in ljud kontinuerligt, vilket leder till att mikrofonen ständigt stängs av och på. Detta resulterar i tydliga och störande klippljud. Programmet var dessutom långsamt. För att kunna presentera ett resultat med rimlig ljudkvalitet valdes därför att inte förändra ljud i realtid. Om projektet getts mer tid skulle eventuella alternativ till recordblocking studerats.
+MATLAB fungerar väl för redan inspelade ljud, men fungerar sämre för in- och uppspelning i realtid. Funktionen recordblocking \cite{bib:recordb} används för att spela in ljud kontinuerligt, vilket leder till att mikrofonen ständigt stängs av och på. Detta resulterar i tydliga och störande klippljud. Programmet var dessutom långsamt. För att kunna presentera ett resultat med rimlig ljudkvalitet valdes därför att inte förändra ljud i realtid. Om projektet getts mer tid skulle eventuella alternativ till recordblocking studerats.
 
 I verklig tillämpning av en vocal harmonizer måste tonarten musikstycket spelas i vara känt för att veta när liten eller stor ters skall användas.
 
@@ -154,5 +154,42 @@ I verklig tillämpning av en vocal harmonizer måste tonarten musikstycket spela
 Under projektets gång har arbetet drabbats av ett par oväntade problem. Datorers oförmåga att hantera mycket små numeriska värden tvingade arbetet bort från Python. MATLAB har även stundvis svårt att vara exakt när det kommer till numeriska beräkningar. Det finns alltså en risk att verktygen som använts påverkar resultatet.
 
 Vidare finns det faktorer kring in- och uppspelning som påverkar hur bra den slutgiltiga skalan faktiskt upplevs. Både samplingsfrekvens och mikrofon spelar stor roll vid inspelningen, och kvalitén på hörlurar eller högtalare påverkar det upplevda resultatet.
+
+\begin{thebibliography}{99}
+
+\bibitem{bib:dafx}
+  Zölzer, U.,
+  \emph{Digital Audio Effects},
+  John Wiley \& Sons Ltd, 2011
+
+\bibitem{bib:schmidt}
+  Schmidt-Jones, C.,
+  \emph{Musical Intervals, Frequency, and Ratio},
+  Rice University,
+  http://goo.gl/nhAhCQ,
+  hämtad 141007
+
+\bibitem{bib:tfya}
+  Sandström, P.,
+  \emph{Föreläsning 6 TFYA65},
+  Linköpings Universitet, 2014
+
+\bibitem{bib:moinet}
+  Moinet, A. \& Dutoit, T.,
+  \emph{PVSOLA: a phase vocoder with synchronized overlap-add},
+  http://goo.gl/N36oye,
+  hämtad 141010
+
+\bibitem{bib:scipy}
+  \emph{Dokumentation av Numpy och Scipy},
+  http://docs.scipy.org/doc,
+  hämtad 141010
+
+\bibitem{bib:recordb}
+  \emph{Dokumentation recordblocking, MATLAB},
+  http://goo.gl/GW7gUl,
+  hämtad 141010
+
+\end{thebibliography}
 
 \end{document}
