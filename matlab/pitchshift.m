@@ -1,24 +1,37 @@
 clear;
 [audio, fs] = wavread('x2.wav'); % Read audio
 tic
-[treklang] = pitch(audio, 0.75, 0.5);
+[treklang] = pitch(audio, 1.25, 1.5);
 toc
+%soundsc(audio,fs)
+%pause(length(audio)/fs+0.5)
 soundsc(treklang,fs) % play new audio
 
 
 %%
+
+microphone = dsp.AudioRecorder;
+speaker = dsp.AudioPlayer;
+specAnalyzer = dsp.SpectrumAnalyzer;
+
+tic
+while toc < 10
+    audio = step(microphone);
+            step(specAnalyzer, audio);
+            step(speaker, audio);
+end
+    
+
+%%
+fs = 48000;
+audiorec = audiorecorder(fs,16,1);
 while 1
-    tempAudioObj = audiorecorder(44000,16,1);
-    
-    recordblocking(tempAudioObj, .4);
-    
-    ljud = getaudiodata(tempAudioObj);
-    
+    recordblocking(audiorec, .7);
+    stop(audiorec);
+    ljud = getaudiodata(audiorec);
+       
     [treklang] = pitch(ljud, 1.25, 1.5);
-    
-    soundsc(treklang,fs);
-    
-    
+    soundsc(treklang,fs);   
 end
 
 
@@ -26,11 +39,11 @@ end
 
 
 for n = 1:1;
-    tempAudioObj = audiorecorder(44000,16,1);
+    audiorec = audiorecorder(44000,16,1);
     
-    recordblocking(tempAudioObj, 1);
+    recordblocking(audiorec, 1);
     
-    ljud = getaudiodata(tempAudioObj);
+    ljud = getaudiodata(audiorec);
     
     Fs = 44000;      %# Samples per second
     toneFreq = 300;  %# Tone frequency, in Hertz
