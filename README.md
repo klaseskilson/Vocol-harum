@@ -1,3 +1,3 @@
 # [Vocol Harum](http://youtu.be/Mb3iPP-tHdA)
 
-Realtime vocal harmonizer in Python!
+The idea was to create a realtime vocal harmonizer in Python! Now it's just a semi-stupid vocal harmonizer in Matlab.
